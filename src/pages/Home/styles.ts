@@ -1,4 +1,5 @@
 import styled, { DefaultTheme, keyframes } from 'styled-components';
+import { Rotation } from '../../utils';
 
 interface IIcon {
   buttonColor?: string;
@@ -16,6 +17,16 @@ const Pulse = keyframes`
   100% {
     transform: scale(1); 
   }
+`;
+
+export const Position = styled.div`
+  position: absolute;
+
+  height: 30px;
+  width: 30px;
+
+  background-color: red;
+  border-radius: 100%;
 `;
 
 export const Container = styled.div`
@@ -128,4 +139,24 @@ export const MapContainer = styled.div`
     border-radius: 1.5rem;
     box-shadow: 0px 0px 58px 13px rgba(0, 0, 0, 0.18);
   }
+`;
+
+const rotationDeg = {
+  [Rotation.UP]: 0,
+  [Rotation.DOWN]: 180,
+  [Rotation.RIGHT]: 90,
+  [Rotation.LEFT]: 270,
+};
+
+export const CarImage = styled.img<{ rotate: Rotation }>`
+  position: absolute;
+
+  height: 2.5rem !important;
+  width: auto;
+
+  box-shadow: unset !important;
+
+  transform: ${props => `rotate(${rotationDeg[props.rotate]}deg)`};
+
+  transition: 0.2s ease-in-out;
 `;
