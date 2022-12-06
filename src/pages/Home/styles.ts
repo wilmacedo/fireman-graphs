@@ -56,6 +56,25 @@ export const ButtonContainer = styled.div`
   justify-content: center;
 `;
 
+export const DistanceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 0.5rem;
+
+  div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  span {
+    font-weight: 600;
+  }
+`;
+
 export const CityContainer = styled.div`
   position: relative;
 

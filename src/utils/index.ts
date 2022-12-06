@@ -124,6 +124,20 @@ const getGraphIndexByPosition = (position: PositionDetail) => {
   return result;
 };
 
+const getPositionByGraphIndex = (index: string): PositionDetail | undefined => {
+  let result;
+
+  Object.keys(getStreetsPosition()).forEach(key => {
+    for (let i = 0; i < getStreetsPosition()[key].length; i++) {
+      if (key + (i + 1) === index) {
+        result = getStreetsPosition()[key][i];
+      }
+    }
+  });
+
+  return result;
+};
+
 const getConfigGraph = (points: any[]) => {
   const graph = new WeigthtedGraph();
 
@@ -159,4 +173,5 @@ export {
   getRotationDeg,
   getConfigGraph,
   getGraphIndexByPosition,
+  getPositionByGraphIndex,
 };

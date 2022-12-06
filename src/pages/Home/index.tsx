@@ -12,6 +12,7 @@ import {
   CityContainer,
   Container,
   Content,
+  DistanceContainer,
   FireImage,
   GraphContainer,
   GraphPoint,
@@ -27,7 +28,7 @@ import {
   getStreetsPosition,
   randomPosition,
 } from '../../utils';
-import { IRandomPosition, PositionState } from '../../types';
+import { IDistance, IRandomPosition, PositionState } from '../../types';
 
 const Home: React.FC = () => {
   const cars = [
@@ -37,7 +38,9 @@ const Home: React.FC = () => {
 
   const [showGraph, setShowGraph] = useState(false);
   const [fire, setFire] = useState<IRandomPosition | undefined>();
-  const { addCars, getCar } = useCar();
+  const { addCars, getCar, setToFire, setMinDistance } = useCar();
+
+  const [distanceInfo, setDistanceInfo] = useState<IDistance | undefined>();
 
   useEffect(() => {
     const carsName = cars.map(car => car.name);
@@ -69,11 +72,6 @@ const Home: React.FC = () => {
     setShowGraph(!showGraph);
   };
 
-  interface IDistance {
-    distance: string[];
-    name: string;
-  }
-
   const startGame = () => {
     const pos = randomPosition();
     setFire(pos);
@@ -104,7 +102,9 @@ const Home: React.FC = () => {
       d => d.distance.length === minDistanceValue,
     );
 
-    console.log(minDistance);
+    setDistanceInfo(minDistance);
+    setMinDistance(minDistance);
+    setToFire(true);
   };
 
   const buttons: ButtonProps[] = [
@@ -124,6 +124,14 @@ const Home: React.FC = () => {
     },
   ];
 
+  const parseCarName = (name: string) => {
+    if (name.includes('2')) {
+      return 'Fireman 2';
+    }
+
+    return 'Fireman';
+  };
+
   return (
     <Container>
       <Content>
@@ -138,6 +146,18 @@ const Home: React.FC = () => {
             <Button {...button} key={index} />
           ))}
         </ButtonContainer>
+        {distanceInfo && (
+          <DistanceContainer>
+            <div>
+              <span>Caminhão:</span>
+              <p>{parseCarName(distanceInfo.name)}</p>
+            </div>
+            <div>
+              <span>Caminho:</span>
+              <p>{distanceInfo.distance.join(' => ')}</p>
+            </div>
+          </DistanceContainer>
+        )}
       </Content>
 
       <CityContainer>

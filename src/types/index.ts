@@ -32,3 +32,8 @@ export interface IRandomPosition {
   position: PositionDetail;
   street: string;
 }
+
+export interface IDistance {
+  distance: string[];
+  name: string;
+}

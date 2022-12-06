@@ -1,6 +1,11 @@
+import { position } from 'polished';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { PositionState } from '../types';
-import { getStreetsPosition } from '../utils';
+import { IDistance, PositionDetail, PositionState } from '../types';
+import {
+  getGraphIndexByPosition,
+  getPositionByGraphIndex,
+  getStreetsPosition,
+} from '../utils';
 
 interface ICar {
   addCars(names: string[]): void;
@@ -12,6 +17,8 @@ interface ICar {
   ];
   nextPosition(name: string): void;
   defaultPosition: PositionState;
+  setToFire: React.Dispatch<React.SetStateAction<boolean>>;
+  setMinDistance: React.Dispatch<React.SetStateAction<IDistance | undefined>>;
 }
 
 type Props = {
@@ -32,6 +39,9 @@ const CarProvider: React.FC<Props> = ({ children }) => {
 
   const [first, setFirst] = useState<PositionState | undefined>();
   const [second, setSecond] = useState<PositionState | undefined>();
+  const [toFire, setToFire] = useState(false);
+  const [minDistance, setMinDistance] = useState<IDistance | undefined>();
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     let cars: PositionState[] = [];
@@ -39,6 +49,7 @@ const CarProvider: React.FC<Props> = ({ children }) => {
     if (second) cars.push(second);
 
     if (cars.length === 0) return;
+    if (toFire) return;
 
     cars.forEach(car => {
       setTimeout(() => {
@@ -46,6 +57,46 @@ const CarProvider: React.FC<Props> = ({ children }) => {
       }, defaultTime);
     });
   }, [first, second]);
+
+  useEffect(() => {
+    if (finished) return;
+    if (!toFire || !minDistance) return;
+    const { name } = minDistance;
+
+    setTimeout(() => {
+      const posIndex = getNextDistanceIndex(name);
+      const graphIndex = minDistance.distance[posIndex + 1];
+      const position = getPositionByGraphIndex(graphIndex);
+      if (!position) {
+        setFinished(true);
+        return;
+      }
+
+      const street = graphIndex.charAt(0);
+
+      const finalPos: PositionState = {
+        position,
+        street,
+        name: minDistance.name,
+        returning: false,
+      };
+
+      updatePosition(minDistance.name, finalPos);
+    }, defaultTime);
+  }, [first, second]);
+
+  const getNextDistanceIndex = (name: string): number => {
+    const [car] = getCar(name);
+
+    const { position } = car;
+
+    if (!minDistance) return -1;
+
+    const graphIndex = getGraphIndexByPosition(position);
+    const distanceIndex = minDistance.distance.findIndex(d => d === graphIndex);
+
+    return distanceIndex;
+  };
 
   const addCars = (names: string[]) => {
     if (first && second) return;
@@ -154,6 +205,8 @@ const CarProvider: React.FC<Props> = ({ children }) => {
     getCar,
     nextPosition,
     defaultPosition,
+    setToFire,
+    setMinDistance,
   };
 
   return <CarContext.Provider value={values}>{children}</CarContext.Provider>;
