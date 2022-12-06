@@ -4,6 +4,9 @@ const theme = {
 
   red: '#D87562',
   green: '#789A77',
+  black: '#000',
+
+  shadow: 'rgba(0, 0, 0, 0.18)',
 };
 
 export default theme;

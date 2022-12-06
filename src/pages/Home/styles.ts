@@ -1,25 +1,92 @@
-import styled, { DefaultTheme, keyframes } from 'styled-components';
-import { Rotation } from '../../utils';
+import styled from 'styled-components';
+import { Rotation } from '../../types';
+import { darken, transparentize } from 'polished';
+import { getRotationDeg } from '../../utils';
 
-interface IIcon {
-  buttonColor?: string;
+interface ICar {
+  rotate: Rotation;
+  returning?: boolean;
 }
 
-const Pulse = keyframes`
-  0% {
-    transform: scale(1);
-  }
+export const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
 
-  50% {
-    transform: scale(1.1);
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  100% {
-    transform: scale(1); 
+  gap: 10rem;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 1rem;
+`;
+
+export const Title = styled.h1`
+  max-width: 20rem;
+
+  text-align: center;
+  font-weight: 500;
+  font-size: 4rem;
+  line-height: 3.5rem;
+`;
+
+export const Separator = styled.div`
+  margin: 0.5rem 0;
+
+  span {
+    font-weight: 600;
+    font-size: 1.25rem;
   }
 `;
 
-export const Position = styled.div`
+export const Subtitle = styled.span`
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+export const CityContainer = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    height: 40rem;
+    width: auto;
+
+    border-radius: 1.5rem;
+    box-shadow: 0px 0px 58px 13px ${props => props.theme.shadow};
+  }
+`;
+
+export const CarImage = styled.img<ICar>`
+  position: absolute;
+
+  height: 3rem !important;
+  width: auto;
+
+  box-shadow: unset !important;
+
+  transform: ${props =>
+    `rotate(${getRotationDeg(props.returning)[props.rotate]}deg)`};
+
+  transition: 0.2s ease-in-out;
+`;
+
+export const FireTest = styled.div`
   position: absolute;
 
   height: 30px;
@@ -29,62 +96,23 @@ export const Position = styled.div`
   border-radius: 100%;
 `;
 
-export const Container = styled.div`
-  padding: 5rem;
+export const GraphContainer = styled.div`
+  width: 100%;
+  height: 100%;
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  position: absolute;
 
-  gap: 10rem;
+  background-color: ${props => transparentize(0.7, props.theme.black)};
+  border-radius: 1.5rem;
+
+  transition: 0.5 ease;
 `;
 
-export const InformationContainer = styled.div`
-  max-width: 20rem;
+export const GraphPoint = styled.div`
+  position: absolute;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: 1rem;
-
-  h1 {
-    text-align: center;
-    font-weight: 500;
-    font-size: 4rem;
-    line-height: 3.5rem;
-  }
-
-  p {
-    font-weight: 600;
-    font-size: 1.25rem;
-  }
-
-  span {
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-  }
-`;
-
-export const ButtonContainer = styled.div`
-  display: flex;
-
-  flex-direction: column;
-`;
-
-export const ButtonContent = styled.div`
-  margin-top: 3rem;
-
-  display: flex;
-
-  flex-direction: row;
-  align-items: center;
-
-  gap: 1rem;
-`;
-
-export const ButtonIcon = styled.div<IIcon>`
-  padding: 0.25rem;
+  height: 1.75rem;
+  width: 1.75rem;
 
   display: flex;
   align-items: center;
@@ -93,70 +121,9 @@ export const ButtonIcon = styled.div<IIcon>`
   border: 1px solid #d5d1c6;
   border-radius: 100%;
 
-  cursor: pointer;
-
-  svg {
-    color: ${props => props.theme[props.buttonColor as keyof DefaultTheme]};
-    font-size: 2rem;
-  }
-
-  &:hover {
-    animation: ${Pulse} 1s ease-in-out infinite;
-  }
-`;
-
-export const ButtonInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  gap: 0.5rem;
+  background-color: ${darken(0.25, '#d5d1c6')};
 
   span {
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-transform: none;
+    color: white;
   }
-
-  p {
-    font-weight: 400;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-  }
-`;
-
-export const MapContainer = styled.div`
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  img {
-    height: 40rem;
-    width: auto;
-
-    border-radius: 1.5rem;
-    box-shadow: 0px 0px 58px 13px rgba(0, 0, 0, 0.18);
-  }
-`;
-
-const rotationDeg = {
-  [Rotation.UP]: 0,
-  [Rotation.DOWN]: 180,
-  [Rotation.RIGHT]: 90,
-  [Rotation.LEFT]: 270,
-};
-
-export const CarImage = styled.img<{ rotate: Rotation }>`
-  position: absolute;
-
-  height: 2.5rem !important;
-  width: auto;
-
-  box-shadow: unset !important;
-
-  transform: ${props => `rotate(${rotationDeg[props.rotate]}deg)`};
-
-  transition: 0.2s ease-in-out;
 `;

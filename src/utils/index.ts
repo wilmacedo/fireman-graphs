@@ -1,129 +1,114 @@
-export enum Car {
-  YELLOW = 'yellow',
-  RED = 'red',
-}
-
-export enum Rotation {
-  UP,
-  DOWN,
-  RIGHT,
-  LEFT,
-}
-
-export interface PositionDetail {
-  x: number;
-  y: number;
-  rotate: Rotation;
-  closePosition?: string;
-}
-
-export interface Position {
-  [name: string]: PositionDetail[];
-}
+import { Position, PositionDetail, Rotation } from '../types';
 
 const getStreetsPosition = () => {
   const positions: Position = {
     A: [
       {
-        x: 57,
+        x: 62,
         y: -280,
         rotate: Rotation.DOWN,
       },
       {
-        x: 57,
-        y: -230,
+        x: 62,
+        y: -223,
         rotate: Rotation.DOWN,
         closePosition: 'B',
       },
       {
-        x: 57,
-        y: -155,
+        x: 62,
+        y: -150,
         rotate: Rotation.DOWN,
       },
       {
-        x: 57,
-        y: -75,
+        x: 62,
+        y: -71,
         rotate: Rotation.DOWN,
         closePosition: 'C',
       },
       {
-        x: 57,
+        x: 62,
         y: 0,
         rotate: Rotation.DOWN,
       },
       {
         x: -5,
-        y: 0,
+        y: 4,
         rotate: Rotation.LEFT,
       },
     ],
     B: [
       {
-        x: 265,
-        y: -230,
+        x: 268,
+        y: -225,
         rotate: Rotation.RIGHT,
       },
       {
-        x: 457,
-        y: -230,
+        x: 462,
+        y: -225,
         rotate: Rotation.RIGHT,
-        closePosition: 'D',
       },
-      {
-        x: 457,
-        y: -280,
-        rotate: Rotation.UP,
-      },
+      { x: 462, y: -150, rotate: Rotation.DOWN },
+      { x: 462, y: 0, rotate: Rotation.DOWN, closePosition: 'F' },
+      { x: 540, y: 0, rotate: Rotation.RIGHT },
     ],
     C: [
-      { x: 136, y: -75, rotate: Rotation.RIGHT, closePosition: 'E' },
-      { x: 217, y: -75, rotate: Rotation.RIGHT },
-      { x: 217, y: 71, rotate: Rotation.DOWN, closePosition: 'F' },
-      { x: 217, y: 210, rotate: Rotation.DOWN },
-      { x: 57, y: 210, rotate: Rotation.LEFT },
-      { x: 57, y: 170, rotate: Rotation.UP },
-      { x: 0, y: 170, rotate: Rotation.LEFT },
+      { x: 141, y: -70, rotate: Rotation.RIGHT, closePosition: 'D' },
+      { x: 222, y: -69, rotate: Rotation.RIGHT },
+      { x: 222, y: 77, rotate: Rotation.DOWN, closePosition: 'E' },
+      { x: 220, y: 210, rotate: Rotation.DOWN },
+      { x: 64, y: 215, rotate: Rotation.LEFT },
+      { x: 64, y: 178, rotate: Rotation.UP },
+      { x: 0, y: 178, rotate: Rotation.LEFT },
     ],
     D: [
-      { x: 457, y: -155, rotate: Rotation.DOWN },
-      { x: 457, y: 0, rotate: Rotation.DOWN },
+      { x: 141, y: -150, rotate: Rotation.UP, closePosition: 'C' },
+      { x: 322, y: -150, rotate: Rotation.UP, closePosition: 'F' },
     ],
-    E: [{ x: 136, y: -150, rotate: Rotation.UP }],
-    F: [{ x: 0, y: 71, rotate: Rotation.LEFT }],
+    E: [
+      { x: 100, y: 77, rotate: Rotation.LEFT, closePosition: 'C' },
+      { x: 0, y: 77, rotate: Rotation.LEFT },
+    ],
+    F: [
+      { x: 322, y: 5, rotate: Rotation.DOWN },
+      { x: 322, y: 215, rotate: Rotation.RIGHT },
+      { x: 462, y: 215, rotate: Rotation.UP },
+      { x: 462, y: 78, rotate: Rotation.RIGHT },
+      { x: 540, y: 78, rotate: Rotation.RIGHT },
+    ],
   };
 
   return positions;
 };
 
-// const getPositions = () => {
-//   const positions: Position = {
-//     A: {
-//       // TOP ORANGE HOUSE
-//       x: 940,
-//       y: 100,
-//       type: PositionType.FIRE_STATION,
-//     },
-//     B: {
-//       // BOTTOM ORANGE HOUSE
-//       x: 1040,
-//       y: 490,
-//       type: PositionType.FIRE_STATION,
-//     },
-//     C: {
-//       // TOP RIGHT BROWN HOUSE
-//       x: 1160,
-//       y: 250,
-//       type: PositionType.HOUSE,
-//     },
-//     D: {
-//       // BOTTOM SIDE BLUE MALL
-//       x: 880,
-//       y: 580,
-//       type: PositionType.MALL,
-//     },
-//   };
+interface IRandomPosition {
+  position: PositionDetail;
+  street: string;
+}
 
-//   return positions;
-// };
+const randomPosition = (): IRandomPosition => {
+  const streetKeys = Object.keys(getStreetsPosition());
 
-export { getStreetsPosition };
+  const randomStreet = Math.floor(Math.random() * streetKeys.length);
+  const street = streetKeys[randomStreet];
+
+  const randomWay = Math.floor(
+    Math.random() * Object.keys(getStreetsPosition()[street]).length,
+  );
+
+  const position = getStreetsPosition()[street][randomWay];
+
+  return { position, street };
+};
+
+const getRotationDeg = (_returning?: boolean) => {
+  const rotationDeg = {
+    [Rotation.UP]: 0,
+    [Rotation.DOWN]: 180,
+    [Rotation.RIGHT]: 90,
+    [Rotation.LEFT]: 270,
+  };
+
+  return rotationDeg;
+};
+
+export { randomPosition, getStreetsPosition, getRotationDeg };
