@@ -27,3 +27,8 @@ export interface PositionState {
   name: string;
   returning: boolean;
 }
+
+export interface IRandomPosition {
+  position: PositionDetail;
+  street: string;
+}

@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react';
 
 import { motion } from 'framer-motion';
 
-import { FiremanTruck, FiremanTruck2, Map2 } from '../../assets';
+import { Fire, FiremanTruck, FiremanTruck2, Map2 } from '../../assets';
 
 import { BsPlay } from 'react-icons/bs';
 import { IoLeafOutline } from 'react-icons/io5';
@@ -12,6 +12,7 @@ import {
   CityContainer,
   Container,
   Content,
+  FireImage,
   GraphContainer,
   GraphPoint,
   Separator,
@@ -20,8 +21,13 @@ import {
 } from './styles';
 import Button, { ButtonProps } from '../../components/Button';
 import { useCar } from '../../contexts/Car';
-import { getStreetsPosition } from '../../utils';
-import { PositionState } from '../../types';
+import {
+  getConfigGraph,
+  getGraphIndexByPosition,
+  getStreetsPosition,
+  randomPosition,
+} from '../../utils';
+import { IRandomPosition, PositionState } from '../../types';
 
 const Home: React.FC = () => {
   const cars = [
@@ -30,6 +36,7 @@ const Home: React.FC = () => {
   ];
 
   const [showGraph, setShowGraph] = useState(false);
+  const [fire, setFire] = useState<IRandomPosition | undefined>();
   const { addCars, getCar } = useCar();
 
   useEffect(() => {
@@ -62,12 +69,51 @@ const Home: React.FC = () => {
     setShowGraph(!showGraph);
   };
 
+  interface IDistance {
+    distance: string[];
+    name: string;
+  }
+
+  const startGame = () => {
+    const pos = randomPosition();
+    setFire(pos);
+
+    const graph = getConfigGraph(getPointPosition());
+    let fireInGraph = getGraphIndexByPosition(pos.position);
+
+    let distances: IDistance[] = [];
+
+    cars.forEach(c => {
+      const [car] = getCar(c.name);
+      const distance = graph.Dijkstra(
+        getGraphIndexByPosition(car.position),
+        fireInGraph,
+      );
+
+      distances.push({ distance, name: car.name });
+    });
+
+    if (distances.length === 0) {
+      console.warn('Nenhum caminhão disponível.');
+      return;
+    }
+
+    let distancesValues = distances.map(d => d.distance.length);
+    let minDistanceValue = Math.min(...distancesValues);
+    let minDistance = distances.find(
+      d => d.distance.length === minDistanceValue,
+    );
+
+    console.log(minDistance);
+  };
+
   const buttons: ButtonProps[] = [
     {
       name: 'Começar',
       description: 'Gere um novo incêndio',
       Icon: BsPlay,
       color: 'red',
+      onClick: startGame,
     },
     {
       name: 'Grafo',
@@ -112,6 +158,11 @@ const Home: React.FC = () => {
             />
           </motion.div>
         ))}
+        {fire && (
+          <motion.div animate={{ x: fire.position.x, y: fire.position.y }}>
+            <FireImage src={Fire} alt="Fire" />
+          </motion.div>
+        )}
         {showGraph && (
           <Fragment>
             <GraphContainer />
@@ -133,5 +184,4 @@ const Home: React.FC = () => {
     </Container>
   );
 };
-
 export default Home;

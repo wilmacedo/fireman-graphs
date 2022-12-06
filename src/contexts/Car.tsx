@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PositionState } from '../types';
-import { getStreetsPosition, randomPosition } from '../utils';
+import { getStreetsPosition } from '../utils';
 
 interface ICar {
   addCars(names: string[]): void;
@@ -116,10 +116,7 @@ const CarProvider: React.FC<Props> = ({ children }) => {
       return;
     }
 
-    const change = Math.random() < 0.5;
-    if (position.closePosition) console.log(change);
-
-    if (position.closePosition && change) {
+    if (position.closePosition && Math.random() < 0.5) {
       const pos = {
         position: getStreetsPosition()[position.closePosition][0],
         street: position.closePosition,
@@ -138,7 +135,6 @@ const CarProvider: React.FC<Props> = ({ children }) => {
         name: car.name,
         returning: false,
       };
-      console.log('finish line');
       updatePosition(name, pos);
       return;
     }

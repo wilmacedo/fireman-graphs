@@ -86,14 +86,13 @@ export const CarImage = styled.img<ICar>`
   transition: 0.2s ease-in-out;
 `;
 
-export const FireTest = styled.div`
+export const FireImage = styled.img`
   position: absolute;
 
-  height: 30px;
-  width: 30px;
+  height: 2.5rem !important;
+  width: auto;
 
-  background-color: red;
-  border-radius: 100%;
+  box-shadow: unset !important;
 `;
 
 export const GraphContainer = styled.div`

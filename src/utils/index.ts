@@ -1,4 +1,5 @@
-import { Position, PositionDetail, Rotation } from '../types';
+import WeigthtedGraph from '../services/algorithm';
+import { IRandomPosition, Position, PositionDetail, Rotation } from '../types';
 
 const getStreetsPosition = () => {
   const positions: Position = {
@@ -80,11 +81,6 @@ const getStreetsPosition = () => {
   return positions;
 };
 
-interface IRandomPosition {
-  position: PositionDetail;
-  street: string;
-}
-
 const randomPosition = (): IRandomPosition => {
   const streetKeys = Object.keys(getStreetsPosition());
 
@@ -111,4 +107,56 @@ const getRotationDeg = (_returning?: boolean) => {
   return rotationDeg;
 };
 
-export { randomPosition, getStreetsPosition, getRotationDeg };
+const getGraphIndexByPosition = (position: PositionDetail) => {
+  const { x, y } = position;
+  let result = 'N/A';
+
+  Object.keys(getStreetsPosition()).forEach(key => {
+    for (let i = 0; i < getStreetsPosition()[key].length; i++) {
+      const detail = getStreetsPosition()[key][i];
+
+      if (detail.x === x && detail.y === y) {
+        result = key + (i + 1);
+      }
+    }
+  });
+
+  return result;
+};
+
+const getConfigGraph = (points: any[]) => {
+  const graph = new WeigthtedGraph();
+
+  Object.values(points).forEach(point => {
+    graph.addVertex(point.key);
+  });
+
+  Object.keys(getStreetsPosition()).forEach(street => {
+    for (let i = 0; i < getStreetsPosition()[street].length; i++) {
+      const streetPosArray = getStreetsPosition()[street];
+      const prevEdge = street + (i + 1);
+
+      if (streetPosArray[i].closePosition) {
+        const behaviorEdge = streetPosArray[i].closePosition + '1';
+
+        graph.addEdge(prevEdge, behaviorEdge, 1);
+      }
+
+      if (i < streetPosArray.length - 1) {
+        const nextEdge = street + (i + 2);
+
+        graph.addEdge(prevEdge, nextEdge, 1);
+      }
+    }
+  });
+
+  return graph;
+};
+
+export {
+  randomPosition,
+  getStreetsPosition,
+  getRotationDeg,
+  getConfigGraph,
+  getGraphIndexByPosition,
+};
